@@ -22,7 +22,7 @@ namespace Volo.Abp.AspNetCore.Mvc.ExceptionHandling
 
         public AbpExceptionFilter(
             IExceptionToErrorInfoConverter errorInfoConverter,
-            IHttpExceptionStatusCodeFinder statusCodeFinder, 
+            IHttpExceptionStatusCodeFinder statusCodeFinder,
             IJsonSerializer jsonSerializer)
         {
             _errorInfoConverter = errorInfoConverter;
@@ -36,6 +36,7 @@ namespace Volo.Abp.AspNetCore.Mvc.ExceptionHandling
         {
             if (!ShouldHandleException(context))
             {
+                context.HttpContext.Response.StatusCode = (int)_statusCodeFinder.GetStatusCode(context.HttpContext, context.Exception);
                 return;
             }
 
@@ -51,7 +52,7 @@ namespace Volo.Abp.AspNetCore.Mvc.ExceptionHandling
             {
                 return true;
             }
-            
+
             if (context.HttpContext.Request.CanAccept(MimeTypes.Application.Json))
             {
                 return true;
